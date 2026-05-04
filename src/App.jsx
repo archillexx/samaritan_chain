@@ -5,6 +5,10 @@ import SetupPanel from './components/SetupPanel';
 import DashboardPanel from './components/DashboardPanel';
 import DonorPanel from './components/DonorPanel';
 import AnalystPanel from './components/AnalystPanel';
+import CharityPanel from './components/CharityPanel';
+import AdminPanel from './components/AdminPanel';
+import VotingPanel from './components/VotingPanel';
+import LookupPanel from './components/LookupPanel';
 
 export default function App() {
   const [account, setAccount] = useState('');
@@ -60,14 +64,21 @@ export default function App() {
           ) : (
             <div>
               <DashboardPanel contracts={contracts} account={account} />
+              
               <div style={{ display: 'flex', gap: '20px' }}>
                 <div style={{ flex: 1 }}>
                   <DonorPanel contracts={contracts} account={account} />
+                  <CharityPanel contracts={contracts} />
+                  <VotingPanel contracts={contracts} />
                 </div>
+                
                 <div style={{ flex: 1 }}>
                   <AnalystPanel contracts={contracts} />
+                  <AdminPanel contracts={contracts} />
+                  <LookupPanel contracts={contracts} />
                 </div>
               </div>
+
             </div>
           )}
         </div>
