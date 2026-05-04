@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
+import { CONTRACTS } from './contracts/contractConfig';
+import SetupPanel from './components/SetupPanel';
+import DashboardPanel from './components/DashboardPanel';
 
 export default function App() {
   const [account, setAccount] = useState('');
+  const [signer, setSigner] = useState(null);
   const [status, setStatus] = useState('Welcome to Samaritan Chain. Please connect your wallet.');
+  const [contracts, setContracts] = useState(null);
 
   async function connectWallet() {
     if (!window.ethereum) {
@@ -15,14 +20,26 @@ export default function App() {
       setStatus('Requesting wallet connection...');
       const provider = new ethers.BrowserProvider(window.ethereum);
       await provider.send('eth_requestAccounts', []);
-      const signer = await provider.getSigner();
-      const userAddress = await signer.getAddress();
+      const userSigner = await provider.getSigner();
+      const userAddress = await userSigner.getAddress();
       
+      setSigner(userSigner);
       setAccount(userAddress);
       setStatus(`Wallet connected: ${userAddress.slice(0,6)}...${userAddress.slice(-4)}`);
     } catch (error) {
       setStatus(`Error: ${error.message}`);
     }
+  }
+
+  function handleContractsReady(addresses) {
+    const loadedContracts = Object.fromEntries(
+      Object.entries(CONTRACTS).map(([key, config]) => [
+        key,
+        new ethers.Contract(addresses[key], config.abi, signer),
+      ])
+    );
+    setContracts(loadedContracts);
+    setStatus('Contracts loaded successfully.');
   }
 
   return (
@@ -36,8 +53,13 @@ export default function App() {
         </button>
       ) : (
         <div>
-          <h2>Dashboard</h2>
-          <p>More features coming soon...</p>
+          {!contracts ? (
+            <SetupPanel onReady={handleContractsReady} />
+          ) : (
+            <div>
+              <DashboardPanel contracts={contracts} account={account} />
+            </div>
+          )}
         </div>
       )}
     </div>
