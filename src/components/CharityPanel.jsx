@@ -17,19 +17,25 @@ export default function CharityPanel({ contracts }) {
   }
 
   return (
-    <div style={{ border: '1px solid black', padding: '20px', marginBottom: '20px' }}>
-      <h2>Charity Panel</h2>
-      <p style={{ color: 'blue' }}>{status}</p>
+    <section className="card">
+      <div className="cardHeader">
+        <h2>Charity Proof Submission</h2>
+        <p>Submit evidence of your charitable work to release funds.</p>
+      </div>
 
-      <div style={{ marginBottom: '10px' }}>
-        <label>Charity ID: </label>
+      {status && <p className="ok" style={{ marginBottom: '16px' }}>{status}</p>}
+
+      <label className="field">
+        <span>Charity ID</span>
         <input type="text" value={charityId} onChange={(e) => setCharityId(e.target.value)} />
-      </div>
-      <div style={{ marginBottom: '10px' }}>
-        <label>Evidence URI: </label>
+      </label>
+      
+      <label className="field">
+        <span>Evidence URI (e.g., IPFS hash)</span>
         <input type="text" value={evidenceURI} onChange={(e) => setEvidenceURI(e.target.value)} />
-      </div>
-      <button onClick={submitProof}>Submit Proof</button>
-    </div>
+      </label>
+      
+      <button onClick={submitProof} style={{ marginTop: '8px' }}>Submit Proof</button>
+    </section>
   );
 }

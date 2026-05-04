@@ -42,28 +42,44 @@ export default function VotingPanel({ contracts }) {
   }
 
   return (
-    <div style={{ border: '1px solid black', padding: '20px', marginBottom: '20px' }}>
-      <h2>Proposal Lookup & Execution</h2>
-      <p style={{ color: 'blue' }}>{status}</p>
+    <section className="card">
+      <div className="cardHeader">
+        <h2>Proposal Execution</h2>
+        <p>View and execute closed proposals.</p>
+      </div>
 
-      <div style={{ marginBottom: '10px' }}>
-        <label>Proposal ID: </label>
+      {status && <p className="warn" style={{ marginBottom: '16px' }}>{status}</p>}
+
+      <label className="field">
+        <span>Proposal ID</span>
         <input type="text" value={proposalId} onChange={(e) => setProposalId(e.target.value)} />
-        <button onClick={loadProposal}>Load Proposal</button>
+      </label>
+      <div className="row" style={{ marginTop: '8px', marginBottom: '16px' }}>
+        <button className="secondary" onClick={loadProposal}>Load Proposal</button>
         <button onClick={execute}>Execute Proposal</button>
       </div>
 
       {proposal && (
-        <div style={{ background: '#eee', padding: '10px' }}>
-          <p><strong>Type:</strong> {proposal.type}</p>
-          <p><strong>Name:</strong> {proposal.name}</p>
-          <p><strong>Charity ID:</strong> {proposal.charityId}</p>
-          <p><strong>Percentage:</strong> {proposal.percentage}%</p>
-          <p><strong>Votes:</strong> {proposal.votesFor} For / {proposal.votesAgainst} Against</p>
-          <p><strong>Status:</strong> {proposal.executed ? 'Executed' : proposal.isOpen ? 'Open' : 'Ready to execute'}</p>
-          <p><strong>Deadline:</strong> {proposal.deadline}</p>
+        <div className="resultBox">
+          <div className="resultHeader">
+            <span className="badge">{proposal.type}</span>
+            <span className={`badge ${proposal.executed ? 'neutral' : proposal.isOpen ? 'success' : 'warning'}`}>
+              {proposal.executed ? 'Executed' : proposal.isOpen ? 'Open' : 'Ready to execute'}
+            </span>
+          </div>
+          <div className="resultGrid">
+            <div><label>Name</label><p>{proposal.name}</p></div>
+            <div><label>Charity ID</label><p>{proposal.charityId}</p></div>
+            <div><label>Wallet</label><p className="truncate">{proposal.wallet}</p></div>
+            <div><label>Percentage</label><p>{proposal.percentage}%</p></div>
+            <div><label>Votes For</label><p className="ok">{proposal.votesFor}</p></div>
+            <div><label>Votes Against</label><p className="warn">{proposal.votesAgainst}</p></div>
+          </div>
+          <div className="resultFooter">
+            <p><strong>Deadline:</strong> {proposal.deadline}</p>
+          </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }

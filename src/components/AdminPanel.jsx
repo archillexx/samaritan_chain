@@ -57,37 +57,50 @@ export default function AdminPanel({ contracts }) {
   }
 
   return (
-    <div style={{ border: '1px solid black', padding: '20px', marginBottom: '20px' }}>
-      <h2>Admin Panel</h2>
-      <p style={{ color: 'blue' }}>{status}</p>
+    <section className="card">
+      <div className="cardHeader">
+        <h2>Admin Operations</h2>
+        <p>Wire contracts and manage access control.</p>
+      </div>
 
-      <div style={{ marginBottom: '20px' }}>
+      {status && <p className="ok" style={{ marginBottom: '16px' }}>{status}</p>}
+
+      <div style={{ marginBottom: '24px' }}>
         <button onClick={wireContracts}>Wire Contracts Together</button>
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
-        <h3>Access Control</h3>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Analyst Wallet: </label>
+      <hr />
+
+      <div style={{ marginBottom: '24px' }}>
+        <h4>Access Control</h4>
+        <label className="field">
+          <span>Analyst Wallet Address</span>
           <input type="text" value={analyst} onChange={(e) => setAnalyst(e.target.value)} />
-          <button onClick={registerAnalyst}>Register Analyst</button>
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Charity Wallet: </label>
+        </label>
+        <button className="secondary" onClick={registerAnalyst}>Register Analyst</button>
+        
+        <div style={{ margin: '16px 0' }}></div>
+        
+        <label className="field">
+          <span>Charity Wallet Address</span>
           <input type="text" value={charityWallet} onChange={(e) => setCharityWallet(e.target.value)} />
-          <button onClick={registerCharity}>Register Charity</button>
-        </div>
+        </label>
+        <button className="secondary" onClick={registerCharity}>Register Charity Wallet</button>
       </div>
 
+      <hr />
+
       <div>
-        <h3>Validate Proof Submissions</h3>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Submission ID: </label>
+        <h4>Validate Proof Submissions</h4>
+        <label className="field">
+          <span>Submission ID</span>
           <input type="text" value={submissionId} onChange={(e) => setSubmissionId(e.target.value)} />
+        </label>
+        <div className="row" style={{ marginTop: '8px' }}>
+          <button onClick={() => validate(true)}>Accept & Release Funds</button>
+          <button className="secondary" onClick={() => validate(false)}>Reject Proof</button>
         </div>
-        <button onClick={() => validate(true)}>Accept & Release Funds</button>
-        <button onClick={() => validate(false)}>Reject Proof</button>
       </div>
-    </div>
+    </section>
   );
 }

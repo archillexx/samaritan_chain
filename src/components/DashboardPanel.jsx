@@ -34,18 +34,23 @@ export default function DashboardPanel({ contracts, account }) {
   }
 
   return (
-    <div style={{ border: '1px solid black', padding: '20px', marginBottom: '20px' }}>
-      <h2>Dashboard</h2>
-      <button onClick={refresh}>Refresh Data</button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <section className="card">
+      <div className="cardHeader">
+        <h2>Dashboard</h2>
+        <p>Live metrics from the Samaritan smart contracts.</p>
+      </div>
       
-      <ul>
-        <li>Escrow Balance: {balance} ETH</li>
-        <li>Your Contributions: {contribution} ETH</li>
-        <li>Total Proposals: {proposalCount}</li>
-        <li>Total Charities: {charityCount}</li>
-        <li>Proof Submissions: {submissionCount}</li>
-      </ul>
-    </div>
+      {error && <p className="warn" style={{ marginBottom: '16px' }}>{error}</p>}
+      
+      <div className="stats">
+        <div className="statCard"><strong>{balance} ETH</strong><span>Escrow Balance</span></div>
+        <div className="statCard"><strong>{contribution} ETH</strong><span>Your Contributions</span></div>
+        <div className="statCard"><strong>{proposalCount}</strong><span>Total Proposals</span></div>
+        <div className="statCard"><strong>{charityCount}</strong><span>Total Charities</span></div>
+        <div className="statCard"><strong>{submissionCount}</strong><span>Proof Submissions</span></div>
+      </div>
+
+      <button className="secondary" onClick={refresh}>Refresh Data</button>
+    </section>
   );
 }

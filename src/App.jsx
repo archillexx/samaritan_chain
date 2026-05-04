@@ -49,30 +49,41 @@ export default function App() {
   }
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
-      <h1>Samaritan Chain dApp</h1>
-      <p>{status}</p>
-      
-      {!account ? (
-        <button onClick={connectWallet} style={{ padding: '10px 20px', cursor: 'pointer' }}>
-          Connect Wallet
-        </button>
-      ) : (
+    <main className="app">
+      <header className="hero">
         <div>
+          <p className="eyebrow">IFB452 Group Project</p>
+          <h1>Samaritan Chain</h1>
+          <p className="subtitle">Transparent, decentralized charity fund allocation and delivery system.</p>
+        </div>
+        <div className="walletBox">
+          <button onClick={connectWallet}>
+            {account ? 'Reconnect Wallet' : 'Connect Wallet'}
+          </button>
+          {account && <p className="walletInfo">{account.slice(0,6)}...{account.slice(-4)}</p>}
+        </div>
+      </header>
+
+      <div style={{ marginBottom: '24px', padding: '16px', background: '#e2e8f0', borderRadius: '12px' }}>
+        <strong>Status: </strong> {status}
+      </div>
+      
+      {account && (
+        <div className="tabContent">
           {!contracts ? (
             <SetupPanel onReady={handleContractsReady} />
           ) : (
             <div>
               <DashboardPanel contracts={contracts} account={account} />
               
-              <div style={{ display: 'flex', gap: '20px' }}>
-                <div style={{ flex: 1 }}>
+              <div className="grid two">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   <DonorPanel contracts={contracts} account={account} />
                   <CharityPanel contracts={contracts} />
                   <VotingPanel contracts={contracts} />
                 </div>
                 
-                <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   <AnalystPanel contracts={contracts} />
                   <AdminPanel contracts={contracts} />
                   <LookupPanel contracts={contracts} />
@@ -83,6 +94,6 @@ export default function App() {
           )}
         </div>
       )}
-    </div>
+    </main>
   );
 }

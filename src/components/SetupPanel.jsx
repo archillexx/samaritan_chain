@@ -17,23 +17,30 @@ export default function SetupPanel({ onReady }) {
   }
 
   return (
-    <div style={{ border: '1px solid black', padding: '20px', marginBottom: '20px' }}>
-      <h2>Setup: Contract Addresses</h2>
-      <p>Paste your deployed contract addresses here.</p>
+    <section className="card">
+      <div className="cardHeader">
+        <h2>Contract Addresses</h2>
+        <p>Deploy the contracts in Remix, then paste each deployed address here.</p>
+      </div>
       
-      {Object.entries(CONTRACTS).map(([key, config]) => (
-        <div key={key} style={{ marginBottom: '10px' }}>
-          <label style={{ display: 'block' }}>{config.label}</label>
-          <input
-            type="text"
-            value={addresses[key] || ''}
-            onChange={(e) => updateAddress(key, e.target.value)}
-            style={{ width: '300px' }}
-          />
-        </div>
-      ))}
+      <div className="grid two compact">
+        {Object.entries(CONTRACTS).map(([key, config]) => (
+          <label key={key} className="field">
+            <span>{config.label}</span>
+            <input
+              type="text"
+              value={addresses[key] || ''}
+              onChange={(e) => updateAddress(key, e.target.value)}
+              placeholder={`Paste ${config.label} address`}
+            />
+          </label>
+        ))}
+      </div>
       
-      <p>{addressesReady ? 'Addresses valid.' : 'Please enter valid Ethereum addresses.'}</p>
+      <div className={`statusIndicator ${addressesReady ? 'ok' : 'warn'}`} style={{ marginTop: '24px', marginBottom: '24px' }}>
+        <div className="indicatorDot"></div>
+        {addressesReady ? 'All addresses look valid.' : 'Waiting for valid Ethereum addresses.'}
+      </div>
       
       <button 
         disabled={!addressesReady} 
@@ -41,6 +48,6 @@ export default function SetupPanel({ onReady }) {
       >
         Load Contracts
       </button>
-    </div>
+    </section>
   );
 }

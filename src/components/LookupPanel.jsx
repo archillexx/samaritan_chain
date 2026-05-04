@@ -39,39 +39,56 @@ export default function LookupPanel({ contracts }) {
   }
 
   return (
-    <div style={{ border: '1px solid black', padding: '20px', marginBottom: '20px' }}>
-      <h2>Data Lookup</h2>
-      <p style={{ color: 'red' }}>{status}</p>
+    <section className="card">
+      <div className="cardHeader">
+        <h2>Data Lookup</h2>
+        <p>Read-only verification tools.</p>
+      </div>
 
-      <div style={{ marginBottom: '20px' }}>
-        <h3>Lookup Charity</h3>
-        <label>Charity ID: </label>
-        <input type="text" value={charityId} onChange={(e) => setCharityId(e.target.value)} />
-        <button onClick={loadCharity}>Load</button>
+      {status && <p className="warn" style={{ marginBottom: '16px' }}>{status}</p>}
+
+      <div style={{ marginBottom: '24px' }}>
+        <h4>Lookup Charity</h4>
+        <label className="field">
+          <span>Charity ID</span>
+          <input type="text" value={charityId} onChange={(e) => setCharityId(e.target.value)} />
+        </label>
+        <button className="secondary" onClick={loadCharity} style={{ marginTop: '8px' }}>Load Charity</button>
+        
         {charity && (
-          <ul>
-            <li>Name: {charity.name}</li>
-            <li>Wallet: {charity.wallet}</li>
-            <li>Allocation: {charity.percentage}%</li>
-            <li>Active: {charity.active ? 'Yes' : 'No'}</li>
-          </ul>
+          <div className="resultBox small">
+            <p><strong>Name:</strong> {charity.name}</p>
+            <p className="truncate"><strong>Wallet:</strong> {charity.wallet}</p>
+            <p><strong>Allocation:</strong> {charity.percentage}%</p>
+            <p><strong>Status:</strong> <span className={charity.active ? 'ok' : 'warn'}>{charity.active ? 'Active' : 'Inactive'}</span></p>
+          </div>
         )}
       </div>
+
+      <hr />
 
       <div>
-        <h3>Lookup Proof Submission</h3>
-        <label>Submission ID: </label>
-        <input type="text" value={submissionId} onChange={(e) => setSubmissionId(e.target.value)} />
-        <button onClick={loadSubmission}>Load</button>
+        <h4>Lookup Proof Submission</h4>
+        <label className="field">
+          <span>Submission ID</span>
+          <input type="text" value={submissionId} onChange={(e) => setSubmissionId(e.target.value)} />
+        </label>
+        <button className="secondary" onClick={loadSubmission} style={{ marginTop: '8px' }}>Load Submission</button>
+        
         {submission && (
-          <ul>
-            <li>Charity ID: {submission.charityId}</li>
-            <li>Submitted By: {submission.submittedBy}</li>
-            <li>Evidence: {submission.evidenceURI}</li>
-            <li>Status: {submission.validated ? 'Validated' : submission.rejected ? 'Rejected' : 'Pending'}</li>
-          </ul>
+          <div className="resultBox small">
+            <p><strong>Charity ID:</strong> {submission.charityId}</p>
+            <p className="truncate"><strong>Submitted By:</strong> {submission.submittedBy}</p>
+            <p className="truncate"><strong>Evidence URI:</strong> {submission.evidenceURI}</p>
+            <p>
+              <strong>Status:</strong>{' '}
+              <span className={submission.validated ? 'ok' : submission.rejected ? 'warn' : 'neutral'}>
+                {submission.validated ? 'Validated & Paid' : submission.rejected ? 'Rejected' : 'Pending Review'}
+              </span>
+            </p>
+          </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }

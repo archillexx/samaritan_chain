@@ -40,26 +40,36 @@ export default function DonorPanel({ contracts, account }) {
   }
 
   return (
-    <div style={{ border: '1px solid black', padding: '20px', marginBottom: '20px' }}>
-      <h2>Donor Panel</h2>
-      <p style={{ color: 'blue' }}>{status}</p>
-      
-      <div style={{ marginBottom: '10px' }}>
-        <button onClick={registerDonor}>Register as Donor</button>
-      </div>
-      
-      <div style={{ marginBottom: '10px' }}>
-        <label>Donation Amount (ETH): </label>
-        <input type="text" value={ethAmount} onChange={(e) => setEthAmount(e.target.value)} />
-        <button onClick={donate}>Donate</button>
+    <section className="card">
+      <div className="cardHeader">
+        <h2>Donor Panel</h2>
+        <p>Register, donate funds, and vote on charitable proposals.</p>
       </div>
 
-      <div style={{ marginBottom: '10px' }}>
-        <label>Proposal ID: </label>
-        <input type="text" value={proposalId} onChange={(e) => setProposalId(e.target.value)} />
-        <button onClick={() => vote(true)}>Vote FOR</button>
-        <button onClick={() => vote(false)}>Vote AGAINST</button>
+      {status && <p className="ok" style={{ marginBottom: '16px' }}>{status}</p>}
+      
+      <div style={{ marginBottom: '24px' }}>
+        <button className="secondary" onClick={registerDonor}>Register as Donor</button>
       </div>
-    </div>
+      
+      <hr />
+
+      <label className="field">
+        <span>Donation Amount (ETH)</span>
+        <input type="text" value={ethAmount} onChange={(e) => setEthAmount(e.target.value)} />
+      </label>
+      <button onClick={donate} style={{ marginBottom: '24px' }}>Donate</button>
+
+      <hr />
+
+      <label className="field">
+        <span>Proposal ID to Vote On</span>
+        <input type="text" value={proposalId} onChange={(e) => setProposalId(e.target.value)} />
+      </label>
+      <div className="row">
+        <button onClick={() => vote(true)}>Vote FOR</button>
+        <button className="secondary" onClick={() => vote(false)}>Vote AGAINST</button>
+      </div>
+    </section>
   );
 }
