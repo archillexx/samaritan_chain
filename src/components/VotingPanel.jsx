@@ -1,11 +1,18 @@
 import { useState } from 'react';
+import { useToast } from './Toast';
 
 export default function VotingPanel({ contracts }) {
   const [proposalId, setProposalId] = useState('0');
   const [proposal, setProposal] = useState(null);
   const [status, setStatus] = useState('');
+  const toast = useToast();
 
   async function loadProposal() {
+    if (proposalId === '') {
+      toast.warning('Input Required', 'Please enter a Proposal ID.');
+      return;
+    }
+    const toastId = toast.info('Loading Proposal', `Fetching Proposal #${proposalId} from smart contract...`, 3000);
     try {
       setStatus('Loading proposal...');
       const basic = await contracts.voting.getProposal(proposalId);
@@ -23,21 +30,34 @@ export default function VotingPanel({ contracts }) {
         percentage: full[4].toString()
       });
       setStatus('');
+      toast.dismiss(toastId);
+      toast.success('Proposal Loaded', `Successfully retrieved details for Proposal #${proposalId}.`);
     } catch (err) {
       setStatus(`Error: ${err.message}`);
       setProposal(null);
+      toast.dismiss(toastId);
+      toast.error('Load Failed', err.message);
     }
   }
 
   async function execute() {
+    if (proposalId === '') {
+      toast.warning('Input Required', 'Please enter a Proposal ID.');
+      return;
+    }
+    const toastId = toast.info('Executing Proposal', `Submitting execution request for Proposal #${proposalId}...`);
     try {
       setStatus('Executing proposal...');
       const tx = await contracts.voting.executeProposal(proposalId);
       await tx.wait();
       setStatus('Proposal executed successfully!');
+      toast.dismiss(toastId);
+      toast.success('Proposal Executed', `Proposal #${proposalId} executed successfully and allocation synced.`);
       loadProposal();
     } catch (err) {
       setStatus(`Error: ${err.message}`);
+      toast.dismiss(toastId);
+      toast.error('Execution Failed', err.message);
     }
   }
 

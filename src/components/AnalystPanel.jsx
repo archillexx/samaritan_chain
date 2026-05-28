@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useToast } from './Toast';
 
 export default function AnalystPanel({ contracts }) {
   const [name, setName] = useState('UNICEF');
@@ -7,26 +8,46 @@ export default function AnalystPanel({ contracts }) {
   const [charityId, setCharityId] = useState('0');
   const [newPercentage, setNewPercentage] = useState('25');
   const [status, setStatus] = useState('');
+  const toast = useToast();
 
   async function proposeAdd() {
+    if (!name || !wallet || !percentage) {
+      toast.warning('Input Required', 'Please fill all charity proposal fields.');
+      return;
+    }
+    const toastId = toast.info('Submitting Proposal', `Creating proposal to add ${name}...`);
     try {
       setStatus('Submitting Add Proposal...');
       const tx = await contracts.voting.proposeAddCharity(name, wallet, percentage);
       await tx.wait();
       setStatus('Add proposal submitted successfully!');
+      toast.dismiss(toastId);
+      toast.success('Proposal Created', `Charity proposal for "${name}" submitted successfully.`);
+      setWallet('');
     } catch (err) {
       setStatus(`Error: ${err.message}`);
+      toast.dismiss(toastId);
+      toast.error('Submission Failed', err.message);
     }
   }
 
   async function proposeUpdate() {
+    if (!charityId || !newPercentage) {
+      toast.warning('Input Required', 'Please enter Charity ID and the new percentage.');
+      return;
+    }
+    const toastId = toast.info('Submitting Proposal', `Creating proposal to update charity #${charityId} percentage to ${newPercentage}%...`);
     try {
       setStatus('Submitting Update Proposal...');
       const tx = await contracts.voting.proposeUpdatePercentage(charityId, newPercentage);
       await tx.wait();
       setStatus('Update proposal submitted successfully!');
+      toast.dismiss(toastId);
+      toast.success('Proposal Created', `Percentage update proposal for Charity #${charityId} submitted successfully.`);
     } catch (err) {
       setStatus(`Error: ${err.message}`);
+      toast.dismiss(toastId);
+      toast.error('Submission Failed', err.message);
     }
   }
 

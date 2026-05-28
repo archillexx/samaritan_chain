@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
+import { useToast } from './Toast';
 
 export default function DashboardPanel({ contracts, account }) {
   const [balance, setBalance] = useState('0');
@@ -8,8 +9,10 @@ export default function DashboardPanel({ contracts, account }) {
   const [charityCount, setCharityCount] = useState('0');
   const [submissionCount, setSubmissionCount] = useState('0');
   const [error, setError] = useState('');
+  const toast = useToast();
 
   async function refresh() {
+    const toastId = toast.info('Syncing dApp State', 'Fetching fresh data from smart contracts...', 3000);
     try {
       setError('');
       const [b, p, c, s] = await Promise.all([
@@ -28,8 +31,12 @@ export default function DashboardPanel({ contracts, account }) {
         const mine = await contracts.donation.donorContributions(account);
         setContribution(ethers.formatEther(mine));
       }
+      toast.dismiss(toastId);
+      toast.success('Metrics Updated', 'Successfully synchronized state with Samaritan Chain.');
     } catch (err) {
       setError(err.message);
+      toast.dismiss(toastId);
+      toast.error('Sync Failed', err.message);
     }
   }
 

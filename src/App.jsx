@@ -9,21 +9,26 @@ import CharityPanel from './components/CharityPanel';
 import AdminPanel from './components/AdminPanel';
 import VotingPanel from './components/VotingPanel';
 import LookupPanel from './components/LookupPanel';
+import { ToastProvider, useToast } from './components/Toast';
 
-export default function App() {
+function SamaritanApp() {
   const [account, setAccount] = useState('');
   const [signer, setSigner] = useState(null);
   const [status, setStatus] = useState('Welcome to Samaritan Chain. Please connect your wallet.');
   const [contracts, setContracts] = useState(null);
+  const toast = useToast();
 
   async function connectWallet() {
     if (!window.ethereum) {
-      setStatus('MetaMask is not installed. Please install it.');
+      const msg = 'MetaMask is not installed. Please install it.';
+      setStatus(msg);
+      toast.error('Wallet Error', msg);
       return;
     }
 
     try {
       setStatus('Requesting wallet connection...');
+      toast.info('Connecting Wallet', 'Please approve the request in MetaMask.');
       const provider = new ethers.BrowserProvider(window.ethereum);
       await provider.send('eth_requestAccounts', []);
       const userSigner = await provider.getSigner();
@@ -32,20 +37,27 @@ export default function App() {
       setSigner(userSigner);
       setAccount(userAddress);
       setStatus(`Wallet connected: ${userAddress.slice(0,6)}...${userAddress.slice(-4)}`);
+      toast.success('Wallet Connected', `Account: ${userAddress.slice(0,6)}...${userAddress.slice(-4)}`);
     } catch (error) {
       setStatus(`Error: ${error.message}`);
+      toast.error('Wallet Connection Failed', error.message || 'Failed to connect wallet');
     }
   }
 
   function handleContractsReady(addresses) {
-    const loadedContracts = Object.fromEntries(
-      Object.entries(CONTRACTS).map(([key, config]) => [
-        key,
-        new ethers.Contract(addresses[key], config.abi, signer),
-      ])
-    );
-    setContracts(loadedContracts);
-    setStatus('Contracts loaded successfully.');
+    try {
+      const loadedContracts = Object.fromEntries(
+        Object.entries(CONTRACTS).map(([key, config]) => [
+          key,
+          new ethers.Contract(addresses[key], config.abi, signer),
+        ])
+      );
+      setContracts(loadedContracts);
+      setStatus('Contracts loaded successfully.');
+      toast.success('Contracts Synchronized', 'All smart contract instances loaded successfully.');
+    } catch (err) {
+      toast.error('Contract Sync Failed', err.message);
+    }
   }
 
   return (
@@ -79,7 +91,7 @@ export default function App() {
               <div className="grid two">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   <DonorPanel contracts={contracts} account={account} />
-                  <CharityPanel contracts={contracts} />
+                  <CharityPanel contracts={contracts} account={account} />
                   <VotingPanel contracts={contracts} />
                 </div>
                 
@@ -95,5 +107,13 @@ export default function App() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function App() {
+  return (
+    <ToastProvider>
+      <SamaritanApp />
+    </ToastProvider>
   );
 }

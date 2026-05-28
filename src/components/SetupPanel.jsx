@@ -1,9 +1,11 @@
 import { useState, useMemo } from 'react';
 import { CONTRACTS, getSavedAddresses, saveAddresses } from '../contracts/contractConfig';
 import { ethers } from 'ethers';
+import { useToast } from './Toast';
 
 export default function SetupPanel({ onReady }) {
   const [addresses, setAddresses] = useState(getSavedAddresses());
+  const toast = useToast();
 
   const addressesReady = useMemo(
     () => Object.values(addresses).every((address) => ethers.isAddress(address)),
@@ -11,9 +13,16 @@ export default function SetupPanel({ onReady }) {
   );
 
   function updateAddress(key, value) {
-    const next = { ...addresses, [key]: value.trim() };
+    const trimmed = value.trim();
+    const next = { ...addresses, [key]: trimmed };
     setAddresses(next);
     saveAddresses(next);
+
+    if (trimmed !== '' && !ethers.isAddress(trimmed)) {
+      toast.warning('Invalid Address Format', `The address for ${CONTRACTS[key].label} is not a valid Ethereum address.`);
+    } else if (ethers.isAddress(trimmed)) {
+      toast.success('Address Saved', `${CONTRACTS[key].label} address configured successfully.`);
+    }
   }
 
   return (
