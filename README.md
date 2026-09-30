@@ -6,7 +6,7 @@
 [![Solidity](https://img.shields.io/badge/Language-Solidity-363636?style=for-the-badge&logo=solidity)](https://soliditylang.org/)
 [![Course Project](https://img.shields.io/badge/Project-IFB452%20Group-orange?style=for-the-badge)](#)
 
-A beautiful, premium Web3 dApp for the **Samaritan Chain** project. This frontend provides an interactive interface to coordinate and manage a four-contract charity escrow, allocation, voting, and delivery validation framework.
+A React frontend for Samaritan Chain, a QUT IFB452 group project: a four-contract charity escrow with donor voting and proof-of-delivery verification.
 
 ---
 
@@ -83,6 +83,10 @@ The dApp coordinates four smart contracts acting in harmony:
 2.  **`AllocationContract`**: The ledger of records. It tracks all registered charities, whether they are active, and their assigned allocation percentage (e.g. 20% of the escrow pool).
 3.  **`VotingContract`**: Governs proposals to add new charities or modify percentages. It allows analysts to make proposals and registered donors to vote. Once a proposal passes its deadline and receives a majority, it can be executed to update the `AllocationContract`.
 4.  **`DeliveryContract`**: Controls the release of funds. Registered charities submit milestone proof (IPFS evidence URIs). When the Admin validates and approves a submission, this contract instructs the `DonationContract` to release the charity's proportional share of the escrow pool directly to their wallet.
+
+### Contract Source
+
+The Solidity source for all four contracts is in [`/contracts`](contracts/). The frontend loads their ABIs from `src/abi/`. If you change a contract, copy its new ABI from Remix into the matching JSON file there.
 
 ---
 
